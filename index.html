@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Wordle PPY</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="script.js" defer></script>
-  </head>
-  <body>
-    <h1 class="titulo">Wordle PPY</h1>
-    <input type="text" id="guess-input" />
-    <button id="guess-button" disabled>Intentar</button>
-    <button id="restart-button" onclick="reiniciarJuego()" style="display: none;">Volver a Jugar</button>
-    <div id="grid"></div>
-    <p id="mensaje" class="mensaje"></p>
-  </body>
+    <head>
+        <title>Wordle</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="script.js" defer></script>
+    </head>
+
+    <body>
+        <div id="contenedor">
+            <div id="principal">
+                <h1>Wordle</h1>
+                <input type="text" id="usuarioInput">
+                <button id="botonInput">Intentar</button>
+                <div id="grilla"> 
+                </div>
+                <p id="intentos"></p>
+                <p id="error">El Valor Ingresado no es Valido!</p>
+                <p id="MsgLose"></p>
+            </div>
+        </div>
+    </body>
 </html>

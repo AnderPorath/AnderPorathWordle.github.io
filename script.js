@@ -1,103 +1,106 @@
-const DICCIONARIO = ["PAPAS", "RATOS", "GAJOS"];
-let PALABRA = DICCIONARIO[Math.floor(Math.random() * DICCIONARIO.length)];
 let intentos = 5;
-console.log(PALABRA);
 
-const BUTTON = document.getElementById("guess-button");
-const RESTART_BUTTON = document.getElementById("restart-button");
-const INPUT = document.getElementById("guess-input");
+const URLAPi = "https://random-word-api.herokuapp.com/word?length=5&lang=es";
+const CANTLETRAS = 5;
 
-INPUT.addEventListener("input", () => {
-  if (INPUT.value.trim() !== "") {
-    BUTTON.disabled = false;
-  } else {
-    BUTTON.disabled = true;
-  }
-});
+let diccionario = ["PLATO", "ANDER", "LLAMA", "ROPAS", "HIENA"];
 
-let juegoTerminado = false;
+const palabra = diccionario[Math.floor(Math.random() * diccionario.length)];
+const BUTTON = document.getElementById('botonInput')
+const ERROR = document.getElementById('error')
+const MSGLOSe = document.getElementById('MsgLose')
+BUTTON.addEventListener('click', intentar)
 
-BUTTON.addEventListener("click", () => {
-  if (juegoTerminado) {
-    return;
-  }
-
-  const INTENTO = leerIntento();
-  const GRID = document.getElementById("grid");
-
-  if (INTENTO.length !== 5) {
-    mostrarMensaje("Debe usar 5 letras");
-    return;
-  }
-
-  let row = document.createElement("div");
-  row.className = "row";
-  for (let i in PALABRA) {
-    if (PALABRA[i] === INTENTO[i]) {
-      let cuadroLetra = armarLetra(INTENTO[i], "green");
-      row.appendChild(cuadroLetra);
-    } else if (PALABRA.includes(INTENTO[i])) {
-      let cuadroLetra = armarLetra(INTENTO[i], "yellow");
-      row.appendChild(cuadroLetra);
-    } else {
-      let cuadroLetra = armarLetra(INTENTO[i], "gray");
-      row.appendChild(cuadroLetra);
+function intentar() {
+    const INTENTO = leerIntento();
+    if ((tamanoControl(INTENTO))) {
+        ERROR.style.display = 'none'
+        intentoManager(INTENTO);
     }
-  }
-
-  GRID.appendChild(row);
-  if (INTENTO === PALABRA) {
-    terminar("<h1>GANASTE!</h1>");
-    juegoTerminado = true;
-  } else {
-    intentos--;
-    if (intentos === 0) {
-      terminar("<h1>PERDISTE!</h1>");
-      juegoTerminado = true;
+    else {
+        ERROR.style.display = 'block'
     }
-  }
 
-  if (intentos === 0 || INTENTO === PALABRA) {
-    BUTTON.disabled = true;
-    RESTART_BUTTON.style.display = "inline"; 
-  }
-});
-
-RESTART_BUTTON.addEventListener("click", reiniciarJuego);
+    const BOX = document.getElementById("usuarioInput");
+    BOX.value = ""
+}
 
 function leerIntento() {
-  return document.getElementById("guess-input").value.toUpperCase();
+    let intento = document.getElementById("usuarioInput");
+    intento = intento.value;
+    intento = intento.toUpperCase();
+    return intento;
+}
+
+function tamanoControl(intento) {
+    let cantLetras = 0;
+    for (let i in intento) {
+        cantLetras += 1;
+    }
+
+    if (cantLetras == CANTLETRAS) {
+        return true
+    } else {
+        return false
+    }
+}
+
+function palabraControl(intento) {
+    if (intento == palabra) {
+        return true
+    }
+}
+
+function letrasControl(intento) {
+  const GRILLA = document.getElementById('grilla');
+
+  const FILA = document.createElement('div');
+  FILA.className = 'row';
+
+  for (let s in intento) {
+      const SPAN = document.createElement('span');
+      SPAN.className = 'letter';
+
+      if (intento[s] == palabra[s]) {
+          SPAN.innerHTML = intento[s];
+          SPAN.style.backgroundColor = 'green';
+      } else if (palabra.includes(intento[s])) {
+          SPAN.innerHTML = intento[s];
+          SPAN.style.backgroundColor = 'yellow';
+      } else {
+          SPAN.innerHTML = intento[s];
+          SPAN.style.backgroundColor = 'gray';
+      }
+
+      FILA.appendChild(SPAN);
+  }
+
+  GRILLA.appendChild(FILA);
+}
+
+function intentoManager(intento) {
+    if (intento == palabra) {
+        letrasControl(intento);
+        console.log('GANASTE!')
+        terminar('GANASTE!')
+        intentos -= 1;
+    }
+    else {
+        letrasControl(intento);
+        intentos -= 1;
+        if (intentos == 0) {
+            terminar('PERDISTE!')
+            MSGLOSe.style.display = 'block'
+            MSGLOSe.innerHTML = "La Palabra Correcta era: " + palabra
+
+        }
+    }
 }
 
 function terminar(mensaje) {
-  document.getElementById("mensaje").innerHTML = mensaje;
-}
-
-function armarLetra(letra, color) {
-  let span = document.createElement("span");
-  span.className = "letter";
-  span.innerHTML = letra;
-  span.style.backgroundColor = color;
-  return span;
-}
-
-function mostrarMensaje(mensaje) {
-  const mensajeElement = document.getElementById("mensaje");
-  mensajeElement.textContent = mensaje;
-  setTimeout(() => {
-    mensajeElement.textContent = "";
-  }, 2000);
-}
-
-function reiniciarJuego() {
-  PALABRA = DICCIONARIO[Math.floor(Math.random() * DICCIONARIO.length)];
-  intentos = 6;
-  juegoTerminado = false;
-  const GRID = document.getElementById("grid");
-  GRID.innerHTML = "";
-  INPUT.value = "";
-  BUTTON.disabled = false;
-  RESTART_BUTTON.style.display = "none";
-  terminar("");
-  console.log(PALABRA);
+    let INTENTO = document.getElementById("usuarioInput");
+    INTENTO.disabled = true;
+    BUTTON.disabled = true;
+    let contenedor = document.getElementById('intentos');
+    contenedor.innerHTML = mensaje
 }
